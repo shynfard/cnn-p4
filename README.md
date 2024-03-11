@@ -1,115 +1,27 @@
-# Implementing a P4 Calculator
+# P4Lang CNN Model Implementation
 
-## Introduction
+## Overview
+This project presents a novel approach to executing Convolutional Neural Network (CNN) models directly within network switches, leveraging the P4 programming language. The implementation is based on a 5-layer CNN model, with each layer separately deployed in network switches. This allows for distributed processing of neural network inference directly on the data plane, potentially reducing latency and offloading computation from traditional compute resources.
 
-The objective of this tutorial is to implement a basic calculator
-using a custom protocol header written in P4. The header will contain
-an operation to perform and two operands. When a switch receives a
-calculator packet header, it will execute the operation on the
-operands, and return the result to the sender.
+## Prerequisites
+- Familiarity with P4 programming language ([P4Lang documentation](https://p4.org/documentation/))
+- Access to P4-capable network switches or a simulation environment (e.g., BMv2)
+- Basic understanding of Convolutional Neural Networks
 
-## Step 1: Run the (incomplete) starter code
+## Installation
+1. Clone this repository to your local machine
+2. Ensure you have the required P4 development environment set up. Refer to the [P4Lang tutorials repository](https://github.com/p4lang/tutorials) for guidance on setting up your development environment.
 
-The directory with this README also contains a skeleton P4 program,
-`calc.p4`, which initially drops all packets.  Your job will be to
-extend it to properly implement the calculator logic.
+## Project Structure
+- `switches/`: Contains separate P4 implementations for each of the 5 CNN layers.
+- `calc.p4`: Template file where data from each switch is integrated and processed.
 
-As a first step, compile the incomplete `calc.p4` and bring up a
-switch in Mininet to test its behavior.
-
-1. In your shell, run:
-   ```bash
-   make
-   ```
-   This will:
-   * compile `calc.p4`, and
-
-   * start a Mininet instance with one switches (`s1`) connected to
-     two hosts (`h1`, `h2`).
-   * The hosts are assigned IPs of `10.0.1.1` and `10.0.1.2`.
-
-2. We've written a small Python-based driver program that will allow
-you to test your calculator. You can run the driver program directly
-from the Mininet command prompt:
-
-```
-mininet> h1 python calc.py
->
-```
-
-3. The driver program will provide a new prompt, at which you can type
-basic expressions. The test harness will parse your expression, and
-prepare a packet with the corresponding operator and operands. It will
-then send a packet to the switch for evaluation. When the switch
-returns the result of the computation, the test program will print the
-result. However, because the calculator program is not implemented,
-you should see an error message.
-
-```
-> 1+1
-Didn't receive response
->
-```
-
-## Step 2: Implement Calculator
-
-To implement the calculator, you will need to define a custom
-calculator header, and implement the switch logic to parse header,
-perform the requested operation, write the result in the header, and
-return the packet to the sender.
-
-We will use the following header format:
-
-             0                1                  2              3
-      +----------------+----------------+----------------+---------------+
-      |      P         |       4        |     Version    |     Op        |
-      +----------------+----------------+----------------+---------------+
-      |                              Operand A                           |
-      +----------------+----------------+----------------+---------------+
-      |                              Operand B                           |
-      +----------------+----------------+----------------+---------------+
-      |                              Result                              |
-      +----------------+----------------+----------------+---------------+
+## Configuration
+To deploy the CNN model across network switches, follow these steps:
+1. Implement each CNN layer according to your model's specifications in the `switches/` folder.
+2. Replace the placeholder data in `calc.p4` with the actual data from each implemented switch layer.
+3. Compile and deploy `calc.p4` to your network switches using your P4 development environment.
 
 
--  P is an ASCII Letter 'P' (0x50)
--  4 is an ASCII Letter '4' (0x34)
--  Version is currently 0.1 (0x01)
--  Op is an operation to Perform:
- -   '+' (0x2b) Result = OperandA + OperandB
- -   '-' (0x2d) Result = OperandA - OperandB
- -   '&' (0x26) Result = OperandA & OperandB
- -   '|' (0x7c) Result = OperandA | OperandB
- -   '^' (0x5e) Result = OperandA ^ OperandB
-
-
-We will assume that the calculator header is carried over Ethernet,
-and we will use the Ethernet type 0x1234 to indicate the presence of
-the header.
-
-Given what you have learned so far, your task is to implement the P4
-calculator program. There is no control plane logic, so you need only
-worry about the data plane implementation.
-
-A working calculator implementation will parse the custom headers,
-execute the mathematical operation, write the result in the result
-field, and return the packet to the sender.
-
-## Step 3: Run your solution
-
-Follow the instructions from Step 1.  This time, you should see the
-correct result:
-
-```
-> 1+1
-2
->
-```
-
-## Relevant Documentation
-
-The documentation for P4_16 and P4Runtime is available [here](https://p4.org/specs/)
-
-All excercises in this repository use the v1model architecture, the documentation for which is available at:
-1. The BMv2 Simple Switch target document accessible [here](https://github.com/p4lang/behavioral-model/blob/master/docs/simple_switch.md) talks mainly about the v1model architecture.
-2. The include file `v1model.p4` has extensive comments and can be accessed [here](https://github.com/p4lang/p4c/blob/master/p4include/v1model.p4).
+## Acknowledgments
+This project is inspired by and based on the resources from the [P4Lang tutorials repository](https://github.com/p4lang/tutorials).
